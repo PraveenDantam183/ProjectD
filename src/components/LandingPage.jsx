@@ -13,8 +13,12 @@ const LandingPage = () => {
         <Link to="/signup">
           <button className="landing-button">Signup</button>
         </Link>
+        {/* <Link to="/tester">
+          <button className="landing-button">Tester</button>
+        </Link> */}
       </div>
     </div>
+
   );
 };
 

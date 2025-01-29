@@ -14,6 +14,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/welcome/:username" element={<Welcome />} /> {/* Dynamic Route */}
+        {/* <Route path="/tester" element={<Tester />} /> */}
       </Routes>
     </Router>
   );
