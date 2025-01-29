@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebase"; // Import db
-import { setDoc, doc } from "firebase/firestore"; // Firestore functions
+import { 
+  createUserWithEmailAndPassword, 
+  sendEmailVerification 
+} from "firebase/auth";
+import { auth, db } from "../firebase";
+import { setDoc, doc } from "firebase/firestore";
 import "../App.css";
 
 function Signup() {
@@ -21,21 +24,40 @@ function Signup() {
     }
 
     try {
-      // Create the user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Store user data in Firestore
+      await sendEmailVerification(user);
+
       await setDoc(doc(db, "users", user.uid), {
-        username: username,
-        email: email,
+        username: username.trim(),
+        email: email.toLowerCase(),
+        emailVerified: false,
+        createdAt: new Date()
       });
 
-      alert("Signup successful! Please login.");
-      navigate("/login"); // Redirect to Login page
+      alert(`Verification email sent to ${email}. Please verify before logging in.`);
+      navigate("/login");
     } catch (error) {
-      console.error("Error signing up:", error.message);
-      alert(error.message);
+      console.error("Signup error:", error.code);
+      handleSignupError(error);
+    }
+  };
+
+  const handleSignupError = (error) => {
+    switch (error.code) {
+      case "auth/email-already-in-use":
+        alert("Account already exists. Please login.");
+        navigate("/login");
+        break;
+      case "auth/invalid-email":
+        alert("Invalid email format");
+        break;
+      case "auth/weak-password":
+        alert("Password must be at least 6 characters");
+        break;
+      default:
+        alert("Signup failed: " + error.message);
     }
   };
 
@@ -43,7 +65,6 @@ function Signup() {
     <div className="signup-container">
       <h2>Signup</h2>
       <form className="signup-form" onSubmit={handleSubmit}>
-        
         <input
           type="text"
           placeholder="Username"
@@ -60,9 +81,10 @@ function Signup() {
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Password (min 6 characters)"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          minLength="6"
           required
         />
         <input
@@ -79,69 +101,3 @@ function Signup() {
 }
 
 export default Signup;
-
-
-
-
-
-
-
-
-
-
-  //const [confirmPassword, setConfirmPassword] = useState("");
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (password !== confirmPassword) {
-  //     alert("Passwords do not match!");
-  //     return;
-  //   }
-  //   console.log("Signup Details:", { email, password });
-  //   alert("Account Created Successfully!");
-  // };
-
-
-  // return (
-  //   <div style={{ maxWidth: "400px", margin: "auto", padding: "20px" }}>
-  //     <h2>Signup</h2>
-  //     <form onSubmit={handleSubmit}>
-  //       <div>
-  //         <label>Email:</label>
-  //         <input
-  //           type="email"
-  //           value={email}
-  //           onChange={(e) => setEmail(e.target.value)}
-  //           required
-  //           style={{ width: "100%", padding: "8px", margin: "8px 0" }}
-  //         />
-  //       </div>
-  //       <div>
-  //         <label>Password:</label>
-  //         <input
-  //           type="password"
-  //           value={password}
-  //           onChange={(e) => setPassword(e.target.value)}
-  //           required
-  //           style={{ width: "100%", padding: "8px", margin: "8px 0" }}
-  //         />
-  //       </div>
-  //       <div>
-  //         <label>Confirm Password:</label>
-  //         <input
-  //           type="password"
-  //           value={confirmPassword}
-  //           onChange={(e) => setConfirmPassword(e.target.value)}
-  //           required
-  //           style={{ width: "100%", padding: "8px", margin: "8px 0" }}
-  //        Signup />
-  //       </div>
-  //       <button type="submit" style={{ padding: "10px 20px" }}>
-  //         
-  //       </button>
-  //     </form>
-  //   </div>
-  // );
-// };
-
-// export default Signup;
