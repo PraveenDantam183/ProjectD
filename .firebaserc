@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "projectd-e4f8e"
-  }
+  },
+  "targets": {
+    "projectd-e4f8e": {
+      "hosting": {
+        "live": [
+          "projectd-e4f8e"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
