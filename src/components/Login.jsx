@@ -43,9 +43,14 @@ function Login() {
       setErrorMessage("Please enter your email address");
       return;
     }
-
+  
     try {
-      await sendPasswordResetEmail(auth, email);
+      const actionCodeSettings = {
+        url: `https://projectd-e4f8e.web.app/reset-password`,
+        handleCodeInApp: true,
+      };
+  
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
       setSuccessMessage("Password reset email sent! Check your inbox.");
       setErrorMessage("");
       setTimeout(() => {

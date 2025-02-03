@@ -166,6 +166,25 @@ body {
   }
 }
 
+/* Password Reset Page Styles */
+.reset-password-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.password-match-indicator {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.password-match-indicator.valid {
+  color: #28a745;
+}
+
+.password-match-indicator.invalid {
+  color: #dc3545;
+}
 
 
 /* :root {
